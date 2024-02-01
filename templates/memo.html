@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memo Cards</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .memo-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .memo-card {
+            flex-basis: 25%;
+            padding: 10px !important;
+            margin: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            width: 225.22px;
+            height: 300px;
+            /* 세로 길이를 300px로 조절 */
+        }
+
+        .memo-card h2 {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-bottom: 10px;
+        }
+
+        .memo-card p {
+            margin: 0;
+        }
+
+        .pagination {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #writeButton {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            align-self: flex-end;
+            margin-right: 180px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Memo</h2>
+    <!-- 글 작성 버튼 -->
+    <button id="writeButton" data-toggle="modal" data-target="#writeModal">글 작성</button>
+
+    <!-- 모달 -->
+    <div class="modal fade" id="writeModal" tabindex="-1" role="dialog" aria-labelledby="writeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="writeModalLabel">글 작성</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="memoText">내용:</label>
+                    <textarea id="memoText" class="form-control" rows="5"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+                    <button id="saveButton" type="button" class="btn btn-primary">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="memo-container">
+        {% for memo in data %}
+        <div class="memo-card" data-memo-text="{{ memo.text }}" data-memo-index="{{ loop.index0 }}">
+            <h2>{{ memo.text }}</h2>
+            <p>{{ memo.text }}: 수정 시간</p>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="memoModal" tabindex="-1" role="dialog" aria-labelledby="memoModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="memoModalLabel">Memo Details</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="memoContent"></p>
+                    <p id="memoIndex"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pagination -->
+    <nav aria-label="Page navigation" class="pagination">
+        <ul class="pagination">
+            {% for page_num in range(1, page_num + 1) %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a></li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // 글 작성 모달 열기
+        $('#writeButton').click(function () {
+            $('#writeModal').modal('show');
+        });
+
+        // 저장 버튼 클릭 시 동작
+        $('#saveButton').click(function () {
+            var memoContent = $('#memoText').val();
+            // 이 부분에서 서버로 memoContent를 전송하고 저장하는 작업을 수행할 수 있습니다.
+            console.log('저장된 메모 내용:', memoText);
+            // 모달 닫기
+            $('#writeModal').modal('hide');
+        });
+        // 카드 클릭 시 모달 열기
+        document.querySelectorAll('.memo-card').forEach(function (card, index) {
+            card.addEventListener('click', function () {
+                var memoText = card.getAttribute('data-memo-text');
+                var memoIndex = card.getAttribute('data-memo-index');
+                document.getElementById('memoContent').textContent = '내용:' + memoText;
+                document.getElementById('memoIndex').textContent = '인덱스: ' + memoIndex;
+                $('#memoModal').modal('show');
+            });
+        });
+    </script>
+</body>
+
+</html>
